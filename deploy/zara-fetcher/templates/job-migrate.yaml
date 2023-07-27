@@ -1,0 +1,44 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-migrate"
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  template:
+    metadata:
+      name: "{{ .Release.Name }}-migrate"
+      labels:
+        app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+        app.kubernetes.io/instance: {{ .Release.Name | quote }}
+        helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        {{- if .Values.postgresql.enabled }}
+        - name: APP_DB_HOST
+          value: "{{ .Release.Name}}-postgresql"
+        - name: APP_DB_PORT
+          value: {{ .Values.postgresql.primary.service.ports.postgresql | quote }}
+        - name: APP_DB_NAME
+          value: {{ .Values.postgresql.auth.database | quote }}
+        - name: APP_DB_USER
+          value: {{ .Values.postgresql.auth.username | quote }}
+        - name: APP_DB_PASSWORD
+          value: {{ .Values.postgresql.auth.password | quote }}
+        {{- end }}
+        command:
+        - alembic
+        - upgrade
+        - head

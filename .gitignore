@@ -1,0 +1,5 @@
+.venv*
+data/*
+deploy/**/charts
+
+*.DS_Store

@@ -1,0 +1,7 @@
+-r requirements-api.txt
+
+isort===5.10.1
+black==22.10.0
+
+# The modular source code checker: pep8, pyflakes and co
+flake8~=6.0.0

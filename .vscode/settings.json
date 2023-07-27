@@ -1,0 +1,7 @@
+{
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    // "python.testing.cwd": "app/tera",
+    "python.defaultInterpreterPath": "./.venv/bin/python",
+    "python.analysis.typeCheckingMode": "off",
+}

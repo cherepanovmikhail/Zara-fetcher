@@ -1,0 +1,8 @@
+fastapi~=0.100.0
+uvicorn~=0.23.1
+pydantic-settings~=2.0.2
+typer~=0.9.0
+SQLAlchemy[asyncio]~=2.0.17
+asyncpg~=0.28.0
+alembic~=1.11.1
+httpx~=0.24.1
