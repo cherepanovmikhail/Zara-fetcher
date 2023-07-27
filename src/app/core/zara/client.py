@@ -64,7 +64,6 @@ class ZaraClient:
         processed_ids_set = set()
 
         while len(product_ids):
-            print(len(product_ids))
             random.shuffle(product_ids)
             params = {'productIds': product_ids[:batch_size], 'ajax': 'true'}
             response = httpx.get(url, params=params, headers=self.headers)
@@ -74,7 +73,6 @@ class ZaraClient:
                 product_data['category_id'] = category_id
                 product_data['currency'] = self._config.currency.value
                 product = Product.model_validate(product_data)
-                print(product.id, sum([1 for color in product.detail.colors]))
                 if product.id not in result:
                     result[product.id] = product
 
@@ -82,7 +80,6 @@ class ZaraClient:
                         processed_ids_set.add(color.productId)
 
             product_ids = [i for i in product_ids if i not in processed_ids_set]
-            print(sum([len(p.detail.colors) for p in result.values()]))
         return list(result.values())
 
     def get_products(self, category_id: int = 2297840) -> list[Product]:
